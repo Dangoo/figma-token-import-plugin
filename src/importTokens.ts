@@ -1,16 +1,7 @@
 import type { DesignToken } from 'style-dictionary';
-import { flattenObjectToArray } from './utils/flattenObjectToArray';
 import { importGridStyles } from './importGridStyles';
 import { importPaintStyles } from './importPaintStyles';
-import { DesignTokensByType, ImportPromise, isColor, isDesignToken, isSize } from './types';
-
-export function parsePayload(
-  payload: Record<'color', Record<string, unknown>>,
-): DesignTokensByType {
-  return {
-    PAINT: flattenObjectToArray(payload.color, isDesignToken),
-  };
-}
+import { DesignTokensByType, ImportPromise, isColor, isSize } from './types';
 
 const importer: { [k in StyleType]: (tokens: DesignToken[]) => ImportPromise } = {
   PAINT: (tokens) => {

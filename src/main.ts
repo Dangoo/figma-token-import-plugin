@@ -1,4 +1,5 @@
-import { importTokens, parsePayload } from './importTokens';
+import { importTokens } from './importTokens';
+import { parsePayload } from './parsePayload';
 
 figma.showUI(__html__);
 
