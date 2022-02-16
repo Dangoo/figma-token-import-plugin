@@ -5,28 +5,32 @@ export function createStyleImporter<T extends DesignToken, S extends BaseStyle>(
   getExistingStyles: () => S[],
   createNewStyle: (token: T, existingStyle: S) => void,
 ): (tokens: Array<T>) => ImportPromise {
-  const allStyles = getExistingStyles();
-  const allStylesMap = new Map(allStyles.map((style) => [style.name, style]));
-  let updatedStylesCount = 0;
+  return async (tokens) => {
+    const allStyles = getExistingStyles();
+    const allStylesMap = new Map(allStyles.map((style) => [style.name, style]));
+    let updatedStylesCount = 0;
 
-  return async (tokens) =>
-    await Promise.all(
-      tokens.map(async (color) => {
-        const existingColor = allStylesMap.get(color.name);
+    return await Promise.all(
+      tokens.map(async (token) => {
+        const existingStyle = allStylesMap.get(token.name);
 
-        if (existingColor) {
+        if (existingStyle) {
           updatedStylesCount++;
         }
 
-        return createNewStyle(color, existingColor);
+        return createNewStyle(token, existingStyle);
       }),
     ).then(
       () => ({
         success: true,
-        newStylesCount: tokens.length,
+        newStylesCount: tokens.length - updatedStylesCount,
         preexistingStylesCount: allStyles.length,
         updatedStylesCount,
       }),
-      () => ({ success: false }),
+      (err) => {
+        console.error(err);
+        return { success: false };
+      },
     );
+  };
 }
