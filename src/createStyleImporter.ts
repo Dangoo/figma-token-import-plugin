@@ -23,6 +23,7 @@ export function createStyleImporter<T extends DesignToken, S extends BaseStyle>(
     ).then(
       () => ({
         success: true,
+        importedTokensCount: tokens.length,
         newStylesCount: tokens.length - updatedStylesCount,
         preexistingStylesCount: allStyles.length,
         updatedStylesCount,

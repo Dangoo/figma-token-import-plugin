@@ -12,6 +12,7 @@ describe(createStyleImporter.name, () => {
     expect(createNewStyleMock).toHaveBeenCalledWith({ name: 'Foo' }, undefined);
     expect(result).toEqual({
       success: true,
+      importedTokensCount: 1,
       newStylesCount: 1,
       preexistingStylesCount: 0,
       updatedStylesCount: 0,
@@ -31,6 +32,7 @@ describe(createStyleImporter.name, () => {
     expect(createNewStyleMock).toHaveBeenCalledWith(newToken, existingStyle);
     expect(result).toEqual({
       success: true,
+      importedTokensCount: 1,
       newStylesCount: 0,
       preexistingStylesCount: 1,
       updatedStylesCount: 1,

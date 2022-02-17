@@ -13,9 +13,9 @@ figma.ui.onmessage = async (msg) => {
 
       if (status.success) {
         figma.notify(
-          `✅ Successfully imported ${status.newStylesCount || 0} tokens. ${
+          `✅ Successfully imported ${status.importedTokensCount || 0} tokens. ${
             status.updatedStylesCount || 0
-          } updated, ${status.newStylesCount - status.updatedStylesCount} new`,
+          } updated, ${status.newStylesCount} new`,
         );
       } else {
         figma.notify('❌ Oops, something went wrong…');
