@@ -34,6 +34,7 @@ export function isSize(obj: any): obj is Size {
 
 export type ImportPromise = Promise<{
   success: boolean;
+  importedTokensCount?: number;
   newStylesCount?: number;
   preexistingStylesCount?: number;
   updatedStylesCount?: number;
