@@ -1,7 +1,6 @@
-import type { DesignToken } from 'style-dictionary';
-import type { ImportPromise } from './types';
+import type { BaseStyleData, ImportPromise } from './types';
 
-export function createStyleImporter<T extends DesignToken, S extends BaseStyle>(
+export function createStyleImporter<T extends BaseStyleData, S extends BaseStyle>(
   getExistingStyles: () => S[],
   createNewStyle: (token: T, existingStyle: S) => void,
 ): (tokens: Array<T>) => ImportPromise {

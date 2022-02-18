@@ -1,5 +1,5 @@
 import { createStyleImporter } from './createStyleImporter';
-import { Color } from './types';
+import { PaintStyleData } from './types';
 
 const createNewStyle = (name: string) => {
   const style = figma.createPaintStyle();
@@ -7,23 +7,18 @@ const createNewStyle = (name: string) => {
   return style;
 };
 
-const createPaintStyleWithColor = ({ name, value, comment }: Color, existingStyle?: PaintStyle) => {
+const createPaintStyleWithColor = ({ name, paints, description }: PaintStyleData, existingStyle?: PaintStyle) => {
   const style = existingStyle || createNewStyle(name);
 
-  if (!value) {
-    return;
-  }
-
   try {
-    const { a: opacity, r, g, b } = value;
-    style.paints = [{ type: 'SOLID', color: { r, g, b }, opacity }];
-    style.description = comment || '';
+    style.paints = paints;
+    style.description = description;
   } catch (error) {
     console.error(error);
   }
 };
 
-export const importPaintStyles = createStyleImporter<Color, PaintStyle>(
+export const importPaintStyles = createStyleImporter<PaintStyleData, PaintStyle>(
   figma.getLocalPaintStyles,
   createPaintStyleWithColor,
 );

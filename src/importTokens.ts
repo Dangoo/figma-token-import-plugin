@@ -1,18 +1,17 @@
-import type { DesignToken } from 'style-dictionary';
 import { importGridStyles } from './importGridStyles';
 import { importPaintStyles } from './importPaintStyles';
-import { DesignTokensByType, ImportPromise, isColor, isSize } from './types';
+import { FigmaStylesData, ImportPromise, isPaintStyle, isGridStyle, BaseStyleData } from './types';
 
-const importer: { [k in StyleType]: (tokens: DesignToken[]) => ImportPromise } = {
+const importer: { [k in StyleType]: (tokens: BaseStyleData[]) => ImportPromise } = {
   PAINT: (tokens) => {
-    if (tokens.every(isColor)) {
+    if (tokens.every(isPaintStyle)) {
       return importPaintStyles(tokens);
     }
 
     throw new Error('Tokens contain entries other than type color');
   },
   GRID: (tokens) => {
-    if (tokens.every(isSize)) {
+    if (tokens.every(isGridStyle)) {
       return importGridStyles(tokens);
     }
 
@@ -35,7 +34,7 @@ const importer: { [k in StyleType]: (tokens: DesignToken[]) => ImportPromise } =
 };
 
 export async function importTokens(
-  tokens: DesignTokensByType,
+  tokens: FigmaStylesData,
   { categories }: { categories: StyleType[] },
 ) {
   return Promise.all(categories.map((category) => importer[category](tokens[category])));

@@ -1,10 +1,5 @@
-import { flattenObjectToArray } from './utils/flattenObjectToArray';
-import { DesignTokensByType, isDesignToken } from './types';
+import { FigmaStylesData, PaintStyleData } from './types';
 
-export function parsePayload(
-  payload: Record<'color', Record<string, unknown>>,
-): DesignTokensByType {
-  return {
-    PAINT: flattenObjectToArray(payload.color || {}, isDesignToken),
-  };
+export function parsePayload(payload: Record<'PAINT', PaintStyleData[]>): FigmaStylesData {
+  return payload;
 }

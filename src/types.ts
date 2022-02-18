@@ -1,41 +1,30 @@
-import type { DesignToken } from 'style-dictionary';
+export type BaseStyleData = Pick<BaseStyle, 'name' | 'type' | 'description'>;
+export type PaintStyleData = Pick<PaintStyle, keyof BaseStyleData | 'paints'>;
+export type GridStyleData = Pick<GridStyle, keyof BaseStyleData | 'layoutGrids'>;
+export type TextStyleData = Pick<TextStyle, keyof BaseStyleData>;
+export type EffectStyleData = Pick<EffectStyle, keyof BaseStyleData>;
 
-export type DesignTokensByType = {
-  [k in StyleType]?: DesignToken[];
-};
-
-export function isDesignToken(obj: any): obj is DesignToken {
-  return obj?.value !== undefined;
+export function isPaintStyle(obj: any): obj is PaintStyleData {
+  return obj?.type === 'PAINT';
 }
 
-export interface Color extends DesignToken {
-  name: string;
-  value: RGBA;
-  attributes: {
-    category: 'color';
-  };
+export function isGridStyle(obj: any): obj is GridStyleData {
+  return obj?.type === 'GRID';
 }
 
-export function isColor(obj: any): obj is Color {
-  return obj?.attributes?.category === 'color';
+export interface FigmaStylesData {
+  PAINT?: PaintStyleData[];
+  GRID?: GridStyleData[];
+  EFFECT?: EffectStyleData[];
+  TEXT?: TextStyleData[];
 }
 
-export interface Size extends DesignToken {
-  name: string;
-  value: string;
-  attributes: {
-    category: 'size';
-  };
-}
-
-export function isSize(obj: any): obj is Size {
-  return obj?.attributes?.category === 'size';
-}
-
-export type ImportPromise = Promise<{
+export interface ImportStatus {
   success: boolean;
   importedTokensCount?: number;
   newStylesCount?: number;
   preexistingStylesCount?: number;
   updatedStylesCount?: number;
-}>;
+}
+
+export type ImportPromise = Promise<ImportStatus>;

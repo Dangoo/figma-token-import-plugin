@@ -1,5 +1,6 @@
 import { importTokens } from './importTokens';
 import { parsePayload } from './parsePayload';
+import type { ImportStatus } from './types';
 
 figma.showUI(__html__);
 
@@ -9,13 +10,31 @@ figma.ui.onmessage = async (msg) => {
   switch (type) {
     case 'IMPORT_THEME':
       const tokens = parsePayload(payload);
-      const [status] = await importTokens(tokens, { categories: ['PAINT'] });
+      const statusResults = await importTokens(tokens, { categories: ['PAINT', 'GRID'] });
+      const aggregatedStatus = statusResults.reduce(
+        (acc: ImportStatus, status) => {
+          return {
+            success: acc.success && status.success,
+            importedTokensCount: acc.importedTokensCount + status.importedTokensCount,
+            updatedStylesCount: acc.updatedStylesCount + status.updatedStylesCount,
+            preexistingStylesCount: acc.preexistingStylesCount + status.preexistingStylesCount,
+            newStylesCount: acc.newStylesCount + status.newStylesCount,
+          };
+        },
+        {
+          success: true,
+          importedTokensCount: 0,
+          updatedStylesCount: 0,
+          preexistingStylesCount: 0,
+          newStylesCount: 0,
+        },
+      );
 
-      if (status.success) {
+      if (aggregatedStatus.success) {
         figma.notify(
-          `✅ Successfully imported ${status.importedTokensCount || 0} tokens. ${
-            status.updatedStylesCount || 0
-          } updated, ${status.newStylesCount} new`,
+          `✅ Successfully imported ${aggregatedStatus.importedTokensCount || 0} tokens. ${
+            aggregatedStatus.updatedStylesCount || 0
+          } updated, ${aggregatedStatus.newStylesCount} new`,
         );
       } else {
         figma.notify('❌ Oops, something went wrong…');
