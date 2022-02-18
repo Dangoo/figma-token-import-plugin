@@ -7,7 +7,10 @@ const createNewStyle = (name: string) => {
   return style;
 };
 
-const createPaintStyleWithColor = ({ name, paints, description }: PaintStyleData, existingStyle?: PaintStyle) => {
+const createPaintStyleWithColor = (
+  { name, paints, description }: PaintStyleData,
+  existingStyle?: PaintStyle,
+) => {
   const style = existingStyle || createNewStyle(name);
 
   try {

@@ -8,9 +8,9 @@ figma.ui.onmessage = async (msg) => {
   const { type, payload } = msg;
 
   switch (type) {
-    case 'IMPORT_THEME':
-      const tokens = parsePayload(payload);
-      const statusResults = await importTokens(tokens, { categories: ['PAINT', 'GRID'] });
+    case 'IMPORT_THEME': {
+      const { styles, selectedCategories } = parsePayload(payload);
+      const statusResults = await importTokens(styles, { categories: selectedCategories });
       const aggregatedStatus = statusResults.reduce(
         (acc: ImportStatus, status) => {
           return {
@@ -29,7 +29,6 @@ figma.ui.onmessage = async (msg) => {
           newStylesCount: 0,
         },
       );
-
       if (aggregatedStatus.success) {
         figma.notify(
           `✅ Successfully imported ${aggregatedStatus.importedTokensCount || 0} tokens. ${
@@ -40,13 +39,15 @@ figma.ui.onmessage = async (msg) => {
         figma.notify('❌ Oops, something went wrong…');
       }
       break;
-    case 'RESIZE':
+    }
+    case 'RESIZE': {
       const { height, width } = payload;
       const { height: viewportHeight, width: viewportWidth } = figma.viewport.bounds;
 
       figma.ui.resize(Math.min(width, viewportWidth), Math.min(height, viewportHeight));
 
       return;
+    }
     case 'CANCEL':
     default:
       break;

@@ -4,12 +4,16 @@ export type GridStyleData = Pick<GridStyle, keyof BaseStyleData | 'layoutGrids'>
 export type TextStyleData = Pick<TextStyle, keyof BaseStyleData>;
 export type EffectStyleData = Pick<EffectStyle, keyof BaseStyleData>;
 
-export function isPaintStyle(obj: any): obj is PaintStyleData {
+export function isPaintStyle(obj: Record<string, unknown>): obj is PaintStyleData {
   return obj?.type === 'PAINT';
 }
 
-export function isGridStyle(obj: any): obj is GridStyleData {
+export function isGridStyle(obj: Record<string, unknown>): obj is GridStyleData {
   return obj?.type === 'GRID';
+}
+
+export function isStyleType(str: string): str is StyleType {
+  return ['PAINT', 'GRID', 'TEXT', 'EFFECT'].includes(str);
 }
 
 export interface FigmaStylesData {

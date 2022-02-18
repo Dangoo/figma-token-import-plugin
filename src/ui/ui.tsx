@@ -8,6 +8,7 @@ const rootElement = document.getElementById('plugin-root');
 const App = () => {
   const inputRef = React.useRef<HTMLInputElement>();
   const [jsonFile, setJsonFile] = React.useState(null);
+  const [selectedCategories, setSelectedCategories] = React.useState(() => new Set());
   const fileLoaderRef = React.useRef<FileReader>(null);
   const submitEnabled = fileLoaderRef.current?.result;
   const fileName = inputRef.current?.files[0]?.name;
@@ -16,11 +17,11 @@ const App = () => {
     inputRef.current.click();
   };
 
-  const handleParseLoad = (ev: ProgressEvent<FileReader>) => {
+  const handleParseLoad = React.useCallback((ev: ProgressEvent<FileReader>) => {
     setJsonFile(JSON.parse(ev.target.result as string));
-  };
+  }, []);
 
-  const handleChange = React.useCallback(
+  const handleChangeFile = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const { files } = event.target;
 
@@ -37,22 +38,45 @@ const App = () => {
     [handleParseLoad],
   );
 
-  const handleSubmit = React.useCallback((event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = React.useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    const json = JSON.parse(fileLoaderRef.current.result as string);
+      const json = JSON.parse(fileLoaderRef.current.result as string);
 
-    parent.postMessage({ pluginMessage: { type: 'IMPORT_THEME', payload: json } }, '*');
-  }, []);
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: 'IMPORT_THEME',
+            payload: { styles: json, selectedCategories: Array.from(selectedCategories) },
+          },
+        },
+        '*',
+      );
+    },
+    [selectedCategories],
+  );
 
-  const handleClearFile = React.useCallback((ev: React.MouseEvent) => {
+  const handleClearFile = React.useCallback(() => {
     setJsonFile(null);
     inputRef.current.value = '';
     fileLoaderRef.current = null;
   }, []);
 
-  const handleCancel = React.useCallback((ev: React.MouseEvent) => {
+  const handleCancel = React.useCallback(() => {
     parent.postMessage({ pluginMessage: { type: 'CANCEL' } }, '*');
+  }, []);
+
+  const handleCategoryChange = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
+    if (ev.target.checked) {
+      setSelectedCategories((prev) => new Set(prev).add(ev.target.value));
+    } else {
+      setSelectedCategories((prev) => {
+        const next = new Set(prev);
+        next.delete(ev.target.value);
+        return next;
+      });
+    }
   }, []);
 
   React.useEffect(() => {
@@ -83,7 +107,7 @@ const App = () => {
           <input
             type="file"
             ref={inputRef}
-            onChange={handleChange}
+            onChange={handleChangeFile}
             accept=".json"
             id="jsonFile"
             hidden
@@ -121,6 +145,8 @@ const App = () => {
           </div>
         </fieldset>
 
+        <p>Hallo {selectedCategories.has('PAINT').toString()}</p>
+
         {jsonFile && (
           <>
             <fieldset className="fieldset">
@@ -129,14 +155,15 @@ const App = () => {
               {Object.keys(jsonFile).map((item) => (
                 <div key={item + '-wrapper'} className="switch">
                   <input
+                    name="category"
                     key={item + '-input'}
                     type="checkbox"
                     className="switch__toggle"
                     value={item}
+                    data-test={selectedCategories.has(item)}
                     id={item}
-                    checked={true}
-                    readOnly
-                    disabled
+                    checked={selectedCategories.has(item)}
+                    onChange={handleCategoryChange}
                   />
                   <label key={item + '-label'} className="switch__label" htmlFor={item}>
                     {item}
