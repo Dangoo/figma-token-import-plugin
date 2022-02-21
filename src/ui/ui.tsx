@@ -145,8 +145,6 @@ const App = () => {
           </div>
         </fieldset>
 
-        <p>Hallo {selectedCategories.has('PAINT').toString()}</p>
-
         {jsonFile && (
           <>
             <fieldset className="fieldset">
