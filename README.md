@@ -4,7 +4,7 @@
 
 - [x] able to import tokens from [Style Dictionary](https://amzn.github.io/style-dictionary) (json)
   - [x] color styles
-  - [ ] grid styles
+  - [x] grid styles
   - [ ] font styles
 
 ### ToDo
