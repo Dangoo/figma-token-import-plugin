@@ -7,7 +7,7 @@ const createNewStyle = (name: string) => {
   return style;
 };
 
-const createGridStyleWithColor = (
+const createGridStyle = (
   { name, layoutGrids, description }: GridStyleData,
   existingStyle?: GridStyle,
 ) => {
@@ -23,5 +23,5 @@ const createGridStyleWithColor = (
 
 export const importGridStyles = createStyleImporter<GridStyleData, GridStyle>(
   figma.getLocalGridStyles,
-  createGridStyleWithColor,
+  createGridStyle,
 );
